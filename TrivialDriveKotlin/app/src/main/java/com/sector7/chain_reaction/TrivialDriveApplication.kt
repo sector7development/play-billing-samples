@@ -13,31 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sample.android.trivialdrivesample
+package com.sector7.chain_reaction
 
 import android.app.Application
-import com.sample.android.trivialdrivesample.billing.BillingDataSource
-import com.sample.android.trivialdrivesample.db.GameStateModel
+import com.sector7.chain_reaction.billing.BillingDataSource
+import com.sector7.chain_reaction.db.GameStateModel
 import kotlinx.coroutines.GlobalScope
 
 class TrivialDriveApplication : Application() {
     lateinit var appContainer: AppContainer
+
     // Container of objects shared across the whole app
     inner class AppContainer {
         private val applicationScope = GlobalScope
         private val gameStateModel = GameStateModel(this@TrivialDriveApplication)
         private val billingDataSource = BillingDataSource.getInstance(
-            this@TrivialDriveApplication,
-            applicationScope,
-            TrivialDriveRepository.INAPP_SKUS,
-            TrivialDriveRepository.SUBSCRIPTION_SKUS,
-            TrivialDriveRepository.AUTO_CONSUME_SKUS
+            this@TrivialDriveApplication, applicationScope, TrivialDriveRepository.INAPP_SKUS
         )
-        val trivialDriveRepository = TrivialDriveRepository(
-            billingDataSource,
-            gameStateModel,
-            applicationScope
-        )
+        val trivialDriveRepository =
+            TrivialDriveRepository(billingDataSource, gameStateModel, applicationScope)
     }
 
     override fun onCreate() {

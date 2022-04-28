@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sample.android.trivialdrivesample.ui;
+package com.sector7.chain_reaction.ui;
 
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -24,10 +24,10 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.sample.android.trivialdrivesample.MakePurchaseViewModel;
-import com.sample.android.trivialdrivesample.R;
-import com.sample.android.trivialdrivesample.databinding.InventoryHeaderBinding;
-import com.sample.android.trivialdrivesample.databinding.InventoryItemBinding;
+import com.sector7.chain_reaction.MakePurchaseViewModel;
+import com.sector7.chain_reaction.R;
+import com.sector7.chain_reaction.databinding.InventoryHeaderBinding;
+import com.sector7.chain_reaction.databinding.InventoryItemBinding;
 
 import java.util.List;
 
@@ -102,22 +102,19 @@ public class MakePurchaseAdapter extends RecyclerView.Adapter<MakePurchaseAdapte
         void bind(Item item,
                 MakePurchaseViewModel makePurchaseViewModel,
                 MakePurchaseFragment makePurchaseFragment) {
-            switch (item.viewType) {
-                case VIEW_TYPE_HEADER:
-                    inventoryHeaderBinding.headerTitle.setText(item.getTitleOrSku());
-                    inventoryHeaderBinding.headerTitle.setMovementMethod(LinkMovementMethod.getInstance());
-                    inventoryHeaderBinding.setLifecycleOwner(makePurchaseFragment);
-                    inventoryHeaderBinding.executePendingBindings();
-                    break;
-                default:
-                    inventoryItemBinding.setSku(item.getTitleOrSku().toString());
-                    inventoryItemBinding.setSkuDetails(
-                            makePurchaseViewModel.getSkuDetails(item.getTitleOrSku().toString()));
-                    inventoryItemBinding.skuTitle.setMovementMethod(LinkMovementMethod.getInstance());
-                    inventoryItemBinding.setMakePurchaseFragment(makePurchaseFragment);
-                    inventoryItemBinding.setLifecycleOwner(makePurchaseFragment);
-                    inventoryItemBinding.executePendingBindings();
-                    break;
+            if (item.viewType == VIEW_TYPE_HEADER) {
+                inventoryHeaderBinding.headerTitle.setText(item.getTitleOrSku());
+                inventoryHeaderBinding.headerTitle.setMovementMethod(LinkMovementMethod.getInstance());
+                inventoryHeaderBinding.setLifecycleOwner(makePurchaseFragment);
+                inventoryHeaderBinding.executePendingBindings();
+            } else {
+                inventoryItemBinding.setSku(item.getTitleOrSku().toString());
+                inventoryItemBinding.setSkuDetails(
+                        makePurchaseViewModel.getSkuDetails(item.getTitleOrSku().toString()));
+                inventoryItemBinding.skuTitle.setMovementMethod(LinkMovementMethod.getInstance());
+                inventoryItemBinding.setMakePurchaseFragment(makePurchaseFragment);
+                inventoryItemBinding.setLifecycleOwner(makePurchaseFragment);
+                inventoryItemBinding.executePendingBindings();
             }
         }
     }

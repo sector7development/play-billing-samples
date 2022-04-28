@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sample.android.trivialdrivesample
+package com.sector7.chain_reaction
 
 import android.app.Activity
 import androidx.lifecycle.LiveData
@@ -32,14 +32,11 @@ import kotlin.collections.set
 class MakePurchaseViewModel(private val tdr: TrivialDriveRepository) : ViewModel() {
 
     companion object {
-        val TAG = "TrivialDrive:" + MakePurchaseViewModel::class.java.simpleName
         private val skuToResourceIdMap: MutableMap<String, Int> = HashMap()
 
         init {
             skuToResourceIdMap[TrivialDriveRepository.SKU_GAS] = R.drawable.buy_gas
             skuToResourceIdMap[TrivialDriveRepository.SKU_PREMIUM] = R.drawable.upgrade_app
-            skuToResourceIdMap[TrivialDriveRepository.SKU_INFINITE_GAS_MONTHLY] = R.drawable.get_infinite_gas
-            skuToResourceIdMap[TrivialDriveRepository.SKU_INFINITE_GAS_YEARLY] = R.drawable.get_infinite_gas
         }
     }
 

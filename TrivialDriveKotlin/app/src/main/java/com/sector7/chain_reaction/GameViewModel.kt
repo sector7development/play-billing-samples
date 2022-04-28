@@ -14,38 +14,45 @@
  * limitations under the License.
  */
 
-package com.sample.android.trivialdrivesample
+package com.sector7.chain_reaction
 
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.launch
 
 /*
    This is used for any business logic, as well as to echo LiveData from the BillingRepository.
 */
-class MainActivityViewModel(private val tdr: TrivialDriveRepository) : ViewModel() {
-
-    val messages: LiveData<Int>
-        get() = tdr.messages.asLiveData()
-
-    fun debugConsumePremium() {
-        tdr.debugConsumePremium()
+class GameViewModel(private val tdr: TrivialDriveRepository) : ViewModel() {
+    fun drive() {
+        viewModelScope.launch {
+            tdr.drive()
+        }
     }
 
-    val billingLifecycleObserver: LifecycleObserver
-        get() = tdr.billingLifecycleObserver
+    /*
+        We can drive if we have at least one unit of gas.
+     */
+    fun canDrive(): LiveData<Boolean> = gasUnitsRemaining.map { gasUnits: Int -> gasUnits > 0 }
+
+    val isPremium get() = tdr.isPurchased(TrivialDriveRepository.SKU_PREMIUM).asLiveData()
+    val gasUnitsRemaining get() = tdr.gasTankLevel().shareIn(viewModelScope, SharingStarted.Lazily).asLiveData()
 
     companion object {
-        val TAG = "TrivialDrive:" + GameViewModel::class.simpleName
+        val TAG = GameViewModel::class.simpleName
     }
 
-    class MainActivityViewModelFactory(private val trivialDriveRepository: TrivialDriveRepository) :
+    class GameViewModelFactory(private val trivialDriveRepository: TrivialDriveRepository) :
         ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(MainActivityViewModel::class.java)) {
-                return MainActivityViewModel(trivialDriveRepository) as T
+            if (modelClass.isAssignableFrom(GameViewModel::class.java)) {
+                return GameViewModel(trivialDriveRepository) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

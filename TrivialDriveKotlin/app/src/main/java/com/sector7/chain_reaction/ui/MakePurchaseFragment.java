@@ -1,24 +1,7 @@
-/*
- * Copyright (C) 2021 Google Inc. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.sample.android.trivialdrivesample.ui;
+package com.sector7.chain_reaction.ui;
 
 import android.os.Bundle;
 import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +15,11 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.sample.android.trivialdrivesample.MakePurchaseViewModel;
-import com.sample.android.trivialdrivesample.R;
-import com.sample.android.trivialdrivesample.TrivialDriveApplication;
-import com.sample.android.trivialdrivesample.TrivialDriveRepository;
-import com.sample.android.trivialdrivesample.databinding.FragmentMakePurchaseBinding;
+import com.sector7.chain_reaction.MakePurchaseViewModel;
+import com.sector7.chain_reaction.R;
+import com.sector7.chain_reaction.TrivialDriveApplication;
+import com.sector7.chain_reaction.TrivialDriveRepository;
+import com.sector7.chain_reaction.databinding.FragmentMakePurchaseBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,12 +59,6 @@ public class MakePurchaseFragment extends Fragment {
         inventoryList.add(new MakePurchaseAdapter.Item(
                 getText(R.string.header_subscribe), MakePurchaseAdapter.VIEW_TYPE_HEADER
         ));
-        inventoryList.add(new MakePurchaseAdapter.Item(
-                TrivialDriveRepository.SKU_INFINITE_GAS_MONTHLY, MakePurchaseAdapter.VIEW_TYPE_ITEM
-        ));
-        inventoryList.add(new MakePurchaseAdapter.Item(
-                TrivialDriveRepository.SKU_INFINITE_GAS_YEARLY, MakePurchaseAdapter.VIEW_TYPE_ITEM
-        ));
     }
 
     @Nullable
@@ -99,9 +76,9 @@ public class MakePurchaseFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         MakePurchaseViewModel.MakePurchaseViewModelFactory makePurchaseViewModelFactory =
                 new MakePurchaseViewModel.MakePurchaseViewModelFactory(
-                        ((TrivialDriveApplication)getActivity().getApplication()).getAppContainer()
+                        ((TrivialDriveApplication) getActivity().getApplication()).getAppContainer()
                                 .getTrivialDriveRepository());
-        makePurchaseViewModel = new ViewModelProvider(this,makePurchaseViewModelFactory)
+        makePurchaseViewModel = new ViewModelProvider(this, makePurchaseViewModelFactory)
                 .get(MakePurchaseViewModel.class);
 
         binding.setMpvm(makePurchaseViewModel);
@@ -135,22 +112,8 @@ public class MakePurchaseFragment extends Fragment {
         if (null == skuTitle || null == isPurchased) {
             return;
         }
-        if ( isPurchased && ( sku.equals(TrivialDriveRepository.SKU_INFINITE_GAS_MONTHLY) ||
-                sku.equals(TrivialDriveRepository.SKU_INFINITE_GAS_YEARLY))) {
-            // add URL to the Play store to allow user to unsubscribe if the user already has
-            // purchased a subscription
-            SpannableString titleSpannable = new SpannableString(skuTitle);
-            titleSpannable.setSpan(new URLSpan(String.format(
-                    PLAY_STORE_SUBSCRIPTION_DEEPLINK_URL,
-                    sku,
-                    getContext().getPackageName())), 0, titleSpannable.length(),
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            result.setValue(titleSpannable);
-        } else {
-            // empty SpannableString needs to be used to clear spannables
-            SpannableString titleSpannable = new SpannableString(skuTitle);
-            result.setValue(titleSpannable);
-        }
+        SpannableString titleSpannable = new SpannableString(skuTitle);
+        result.setValue(titleSpannable);
     }
 
     public LiveData<CharSequence> skuTitle(final @NonNull String sku) {
@@ -159,9 +122,9 @@ public class MakePurchaseFragment extends Fragment {
         final LiveData<Boolean> isPurchasedLiveData = makePurchaseViewModel.isPurchased(sku);
         final MediatorLiveData<CharSequence> result = new MediatorLiveData<>();
         result.addSource(skuTitleLiveData, title ->
-                combineTitleSkuAndIsPurchasedData(result, skuTitleLiveData, isPurchasedLiveData, sku ));
+                combineTitleSkuAndIsPurchasedData(result, skuTitleLiveData, isPurchasedLiveData, sku));
         result.addSource(isPurchasedLiveData, isPurchased ->
-                combineTitleSkuAndIsPurchasedData(result, skuTitleLiveData, isPurchasedLiveData, sku ));
+                combineTitleSkuAndIsPurchasedData(result, skuTitleLiveData, isPurchasedLiveData, sku));
         return result;
     }
 }

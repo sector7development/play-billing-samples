@@ -19,8 +19,6 @@
     <string name="title_game_fragment">Trivial Drive</string>
     <string name="title_make_purchase_fragment">Buy Stuff!</string>
 
-    <string name="menu_consume_premium">Consume Premium (For Testing)</string>
-
     <string name="header_fuel_your_ride">Fuel Your Ride</string>
     <string name="header_go_premium">Go Premium</string>
     <string name="header_subscribe"><a href="https://play.google.com/store/account/subscriptions">Subscribe</a></string>
@@ -35,7 +33,6 @@
     <string name="message_you_drove">You drove!</string>
     <string name="message_more_gas_acquired">More gas acquired!</string>
     <string name="message_premium">You\'re now a premium driver!</string>
-    <string name="message_subscribed">Thank you for subscribing! You have infinite gas!</string>
     <string name="message_out_of_gas">You\'re out of gas! Buy more!</string>
 
     <string name="debug_price_not_found">N/A</string>
@@ -48,5 +45,4 @@
         <b>must</b> be set for signature verification. You can add it to <b>local.properties</b>
         once you have gotten it from Play.\n\n<b>Example: <tt>base64EncodedPublicKey=[key value]</tt>
         </b></string>
-    <string name="alert_error_title_encoded_public_key_not_set">Public Key Not Set</string>
 </resources>

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sample.android.trivialdrivesample.ui;
+package com.sector7.chain_reaction.ui;
 
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -28,17 +28,11 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
-import com.sample.android.trivialdrivesample.GameViewModel;
-import com.sample.android.trivialdrivesample.R;
-import com.sample.android.trivialdrivesample.TrivialDriveApplication;
-import com.sample.android.trivialdrivesample.databinding.FragmentGameBinding;
+import com.sector7.chain_reaction.GameViewModel;
+import com.sector7.chain_reaction.R;
+import com.sector7.chain_reaction.TrivialDriveApplication;
+import com.sector7.chain_reaction.databinding.FragmentGameBinding;
 
-/**
- * This Fragment represents the game world, but it really just exists to bind the variables used
- * in the views that use DataBinding to observe the ViewModel.
- *
- * There's nothing about billing here; billing informationis abstracted into the BillingRepository.
- */
 public class GameFragment extends androidx.fragment.app.Fragment {
     private final String TAG = "GameFragment";
 
