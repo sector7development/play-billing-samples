@@ -38,7 +38,6 @@
             android:id="@+id/inapp_inventory"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:enabled="@{!mpvm.billingFlowInProcess}"
             tools:context="com.kotlin.trivialdrive.MakePurchaseFragment"
             tools:listitem="@layout/inventory_item" />
 

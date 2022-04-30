@@ -19,6 +19,8 @@
     <string name="title_game_fragment">Trivial Drive</string>
     <string name="title_make_purchase_fragment">Buy Stuff!</string>
 
+    <string name="menu_consume_premium">Revoke Premium Purchase (Debug)</string>
+
     <string name="header_fuel_your_ride">Fuel Your Ride</string>
     <string name="header_go_premium">Go Premium</string>
     <string name="header_subscribe"><a href="https://play.google.com/store/account/subscriptions">Subscribe</a></string>

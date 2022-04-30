@@ -32,7 +32,7 @@
             />
         <variable
             name="skuDetails"
-            type="com.sector7.chain_reaction.MakePurchaseViewModel.SkuDetails"
+            type="com.sector7.chain_reaction.MakePurchaseViewModel.ScootyTails"
             />
         <variable
             name="makePurchaseFragment"

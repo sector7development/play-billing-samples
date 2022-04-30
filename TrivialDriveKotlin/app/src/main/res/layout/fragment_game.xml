@@ -23,9 +23,6 @@
             name="gvm"
             type="com.sector7.chain_reaction.GameViewModel"/>
         <variable
-            name="gasTankImages"
-            type="android.content.res.TypedArray"/>
-        <variable
             name="gameFragment"
             type="com.sector7.chain_reaction.ui.GameFragment"/>
     </data>
@@ -61,7 +58,7 @@
                 android:layout_marginTop="@dimen/margin_std_2x"
                 android:layout_marginEnd="@dimen/margin_std_2x"
                 android:contentDescription="@string/content_description_gas_gauge_indicator"
-                android:src="@{gasTankImages.getDrawable(gvm.gasUnitsRemaining)}"
+                android:src="@drawable/gas_inf"
                 app:layout_constraintBottom_toTopOf="@+id/drive_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -75,11 +72,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_std_2x"
                 android:layout_marginEnd="@dimen/margin_std_half"
-                android:enabled="@{gvm.canDrive()}"
+                android:enabled="false"
                 android:gravity="center_horizontal|center_vertical"
                 android:minWidth="120dp"
                 android:minHeight="48dp"
-                android:onClick="@{()->gameFragment.drive()}"
                 android:text="@string/button_drive"
                 android:textAlignment="center"
                 app:layout_constraintBottom_toBottomOf="parent"

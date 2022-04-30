@@ -17,7 +17,6 @@ package com.sector7.chain_reaction
 
 import android.app.Application
 import com.sector7.chain_reaction.billing.BillingDataSource
-import com.sector7.chain_reaction.db.GameStateModel
 import kotlinx.coroutines.GlobalScope
 
 class TrivialDriveApplication : Application() {
@@ -26,12 +25,9 @@ class TrivialDriveApplication : Application() {
     // Container of objects shared across the whole app
     inner class AppContainer {
         private val applicationScope = GlobalScope
-        private val gameStateModel = GameStateModel(this@TrivialDriveApplication)
-        private val billingDataSource = BillingDataSource.getInstance(
-            this@TrivialDriveApplication, applicationScope, TrivialDriveRepository.INAPP_SKUS
-        )
-        val trivialDriveRepository =
-            TrivialDriveRepository(billingDataSource, gameStateModel, applicationScope)
+        private val billingDataSource =
+            BillingDataSource.getInstance(this@TrivialDriveApplication, applicationScope)
+        val trivialDriveRepository = TrivialDriveRepository(billingDataSource, applicationScope)
     }
 
     override fun onCreate() {

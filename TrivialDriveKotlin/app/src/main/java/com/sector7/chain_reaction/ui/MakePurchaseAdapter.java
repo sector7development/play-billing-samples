@@ -56,17 +56,15 @@ public class MakePurchaseAdapter extends RecyclerView.Adapter<MakePurchaseAdapte
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         InventoryItemBinding inventoryItemBinding = null;
         InventoryHeaderBinding inventoryHeaderBinding = null;
-        switch (viewType) {
-            case VIEW_TYPE_HEADER:
-                inventoryHeaderBinding = DataBindingUtil.inflate(layoutInflater, R.layout.inventory_header, parent,
-                        false);
-                view = inventoryHeaderBinding.getRoot();
-                break;
-            default: // VIEW_TYPE_ITEM
-                inventoryItemBinding = DataBindingUtil.inflate(layoutInflater, R.layout.inventory_item, parent,
-                        false);
-                view = inventoryItemBinding.getRoot();
-                break;
+        // VIEW_TYPE_ITEM
+        if (viewType == VIEW_TYPE_HEADER) {
+            inventoryHeaderBinding = DataBindingUtil.inflate(layoutInflater, R.layout.inventory_header, parent,
+                    false);
+            view = inventoryHeaderBinding.getRoot();
+        } else {
+            inventoryItemBinding = DataBindingUtil.inflate(layoutInflater, R.layout.inventory_item, parent,
+                    false);
+            view = inventoryItemBinding.getRoot();
         }
         return new ViewHolder(view, viewType, inventoryHeaderBinding, inventoryItemBinding);
     }

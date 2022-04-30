@@ -1,26 +1,6 @@
-/*
- * Copyright (C) 2021 Google Inc. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.sector7.chain_reaction.ui;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -38,14 +18,10 @@ import com.sector7.chain_reaction.TrivialDriveApplication;
 import com.sector7.chain_reaction.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-    private MainActivityViewModel mainActivityViewModel;
-    private ActivityMainBinding activityMainBinding;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.v("MainActivity", "onCreate");
-        activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        ActivityMainBinding activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
@@ -63,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 MainActivityViewModel.MainActivityViewModelFactory(
                 ((TrivialDriveApplication) getApplication()).getAppContainer().
                         getTrivialDriveRepository());
-        mainActivityViewModel = new ViewModelProvider(this, mainActivityViewModelFactory)
+        MainActivityViewModel mainActivityViewModel = new ViewModelProvider(this, mainActivityViewModelFactory)
                 .get(MainActivityViewModel.class);
 
         // Create our Activity ViewModel, which exists to handle global Snackbar messages
