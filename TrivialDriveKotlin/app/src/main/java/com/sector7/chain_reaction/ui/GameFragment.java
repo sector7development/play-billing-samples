@@ -15,19 +15,16 @@ import androidx.navigation.Navigation;
 
 import com.sector7.chain_reaction.GameViewModel;
 import com.sector7.chain_reaction.R;
-import com.sector7.chain_reaction.TrivialDriveApplication;
 import com.sector7.chain_reaction.databinding.FragmentGameBinding;
 
 public class GameFragment extends Fragment {
     private final String TAG = "GameFragment";
 
-    private GameViewModel gameViewModel;
     private FragmentGameBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.v(TAG, "onCreateView");
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_game, container, false);
         binding.setLifecycleOwner(this);
         return binding.getRoot();
@@ -36,17 +33,8 @@ public class GameFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.v(TAG, "onViewCreated");
 
-        GameViewModel.GameViewModelFactory gameViewModelFactory =
-                new GameViewModel.GameViewModelFactory(
-                        ((TrivialDriveApplication)getActivity().getApplication()).getAppContainer()
-                                .getTrivialDriveRepository());
-
-        gameViewModel = new ViewModelProvider(this,gameViewModelFactory)
-                .get(GameViewModel.class);
-
-        binding.setGvm(gameViewModel);
+        binding.setGvm(new ViewModelProvider(this, new GameViewModel.GameViewModelFactory()).get(GameViewModel.class));
         binding.setGameFragment(this);
     }
 

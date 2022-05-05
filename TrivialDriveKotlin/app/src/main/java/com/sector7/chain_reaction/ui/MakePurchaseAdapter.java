@@ -15,7 +15,6 @@
  */
 package com.sector7.chain_reaction.ui;
 
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +41,8 @@ public class MakePurchaseAdapter extends RecyclerView.Adapter<MakePurchaseAdapte
     private final MakePurchaseFragment makePurchaseFragment;
 
     public MakePurchaseAdapter(@NonNull List<Item> inventoryList,
-            @NonNull MakePurchaseViewModel makePurchaseViewModel,
-            @NonNull MakePurchaseFragment makePurchaseFragment) {
+                               @NonNull MakePurchaseViewModel makePurchaseViewModel,
+                               @NonNull MakePurchaseFragment makePurchaseFragment) {
         this.inventoryList = inventoryList;
         this.makePurchaseViewModel = makePurchaseViewModel;
         this.makePurchaseFragment = makePurchaseFragment;
@@ -66,13 +65,11 @@ public class MakePurchaseAdapter extends RecyclerView.Adapter<MakePurchaseAdapte
                     false);
             view = inventoryItemBinding.getRoot();
         }
-        return new ViewHolder(view, viewType, inventoryHeaderBinding, inventoryItemBinding);
+        return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Item item = inventoryList.get(position);
-        holder.bind(item, makePurchaseViewModel, makePurchaseFragment);
     }
 
     @Override
@@ -86,34 +83,8 @@ public class MakePurchaseAdapter extends RecyclerView.Adapter<MakePurchaseAdapte
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        final InventoryHeaderBinding inventoryHeaderBinding;
-        final InventoryItemBinding inventoryItemBinding;
-
-        public ViewHolder(View v, int viewType, InventoryHeaderBinding inventoryHeaderBinding,
-                InventoryItemBinding inventoryItemBinding
-        ) {
+        public ViewHolder(View v) {
             super(v);
-            this.inventoryHeaderBinding = inventoryHeaderBinding;
-            this.inventoryItemBinding = inventoryItemBinding;
-        }
-
-        void bind(Item item,
-                MakePurchaseViewModel makePurchaseViewModel,
-                MakePurchaseFragment makePurchaseFragment) {
-            if (item.viewType == VIEW_TYPE_HEADER) {
-                inventoryHeaderBinding.headerTitle.setText(item.getTitleOrSku());
-                inventoryHeaderBinding.headerTitle.setMovementMethod(LinkMovementMethod.getInstance());
-                inventoryHeaderBinding.setLifecycleOwner(makePurchaseFragment);
-                inventoryHeaderBinding.executePendingBindings();
-            } else {
-                inventoryItemBinding.setSku(item.getTitleOrSku().toString());
-                inventoryItemBinding.setSkuDetails(
-                        makePurchaseViewModel.getSkuDetails(item.getTitleOrSku().toString()));
-                inventoryItemBinding.skuTitle.setMovementMethod(LinkMovementMethod.getInstance());
-                inventoryItemBinding.setMakePurchaseFragment(makePurchaseFragment);
-                inventoryItemBinding.setLifecycleOwner(makePurchaseFragment);
-                inventoryItemBinding.executePendingBindings();
-            }
         }
     }
 
@@ -122,22 +93,10 @@ public class MakePurchaseAdapter extends RecyclerView.Adapter<MakePurchaseAdapte
      * the title of a header or a reference to a SKU, depending on what the type of the view is.
      */
     static class Item {
-        public Item(@NonNull CharSequence titleOrSku, int viewType) {
-            this.titleOrSku = titleOrSku;
+        public Item(int viewType) {
             this.viewType = viewType;
         }
 
-        public @NonNull
-        CharSequence getTitleOrSku() {
-            return titleOrSku;
-        }
-
-        public int getViewType() {
-            return viewType;
-        }
-
-        private final @NonNull
-        CharSequence titleOrSku;
         private final int viewType;
     }
 }

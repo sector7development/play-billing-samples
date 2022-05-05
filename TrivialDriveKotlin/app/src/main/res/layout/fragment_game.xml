@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_std_2x"
                 android:contentDescription="@string/content_description_free_vs_premium_indicator"
-                android:src="@{gvm.premium ? @drawable/premium : @drawable/free}"
+                android:src="@drawable/premium"
                 app:layout_constraintBottom_toTopOf="@+id/gas_gauge"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

@@ -16,7 +16,7 @@
 package com.sector7.chain_reaction
 
 import android.app.Application
-import com.sector7.chain_reaction.billing.BillingDataSource
+import com.sector7.chain_reaction.billing.BillingManager
 import kotlinx.coroutines.GlobalScope
 
 class TrivialDriveApplication : Application() {
@@ -26,8 +26,8 @@ class TrivialDriveApplication : Application() {
     inner class AppContainer {
         private val applicationScope = GlobalScope
         private val billingDataSource =
-            BillingDataSource.getInstance(this@TrivialDriveApplication, applicationScope)
-        val trivialDriveRepository = TrivialDriveRepository(billingDataSource, applicationScope)
+            BillingManager.getInstance(this@TrivialDriveApplication, applicationScope)
+        val trivialDriveRepository = BillingRepository(billingDataSource, applicationScope)
     }
 
     override fun onCreate() {

@@ -9,32 +9,30 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.android.billingclient.api.*
-import com.sector7.chain_reaction.TrivialDriveRepository.Companion.SKU_TABLET_BOARDS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
-private const val reconnectDelay = 1_000L // 1 second (
+private const val reconnectDelay = 1_000L // 1 second
 private const val maxReconnectDelay = 1_000L * 60L * 15L // 15 minutes
 private const val skuRequeryDelay = 1_000L * 60L * 60L * 4L // 4 hours
 
-class BillingDataSource private constructor(
+class BillingManager private constructor(
     application: Application, private val defaultScope: CoroutineScope
 ) : LifecycleObserver {
+    private enum class PurchaseState { Unowned, Pending, Purchased, Acknowledged }
+
     private val billingClient: BillingClient
 
-    private val skus = listOf(SKU_TABLET_BOARDS)
+    private val skus = listOf("tablet_boards")
     private var reconnectTimer = reconnectDelay // ms
 
     // when was the last successful SkuDetailsResponse?
     private var skuDetailsResponseTime = -skuRequeryDelay
 
-    private enum class PurchaseState { Unowned, Pending, Purchased, Acknowledged }
-
-    private val skuStateMap = skus.associateWith { MutableStateFlow(PurchaseState.Unowned) }
-
-    private val skuDetailsMap = skus.associateWith {
+    private val _skuState = skus.associateWith { MutableStateFlow(PurchaseState.Unowned) }
+    private val _skuDetails = skus.associateWith {
         MutableStateFlow<SkuDetails?>(null).also {
             it.subscriptionCount.map { count -> count > 0 }.distinctUntilChanged()
                 .onEach { isActive ->
@@ -46,29 +44,26 @@ class BillingDataSource private constructor(
         }
     }
 
-    // Observables that are used to communicate state.
     private val _newPurchases = MutableSharedFlow<List<String>>(extraBufferCapacity = 1)
-    private val billingFlowInProcess = MutableStateFlow(false)
+    private val _billingFlowInProcess = MutableStateFlow(false)
 
     val newPurchases get() = _newPurchases.asSharedFlow()
 
-    fun isPurchased(sku: String) = skuStateMap[sku]!!.map { it == PurchaseState.Acknowledged }
+    fun isPurchased(sku: String) = _skuState[sku]!!.map { it == PurchaseState.Acknowledged }
 
     fun canPurchase(sku: String) =
-        skuStateMap[sku]!!.combine(skuDetailsMap[sku]!!) { skuState, skuDetails -> skuState == PurchaseState.Unowned && skuDetails != null }
+        _skuState[sku]!!.combine(_skuDetails[sku]!!) { skuState, skuDetails -> skuState == PurchaseState.Unowned && skuDetails != null }
 
-    fun getSkuTitle(sku: String) =
-        skuDetailsMap[sku]!!.mapNotNull { skuDetails -> skuDetails?.title }
+    fun getSkuTitle(sku: String) = _skuDetails[sku]!!.mapNotNull { skuDetails -> skuDetails?.title }
 
-    fun getSkuPrice(sku: String) =
-        skuDetailsMap[sku]!!.mapNotNull { skuDetails -> skuDetails?.price }
+    fun getSkuPrice(sku: String) = _skuDetails[sku]!!.mapNotNull { skuDetails -> skuDetails?.price }
 
     fun getSkuDescription(sku: String) =
-        skuDetailsMap[sku]!!.mapNotNull { skuDetails -> skuDetails?.description }
+        _skuDetails[sku]!!.mapNotNull { skuDetails -> skuDetails?.description }
 
     private fun onSkuDetailsResponse(result: BillingResult, skuDetailsList: List<SkuDetails>) {
         if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-            skuDetailsList.forEach { skuDetailsMap[it.sku]?.value = it }
+            skuDetailsList.forEach { _skuDetails[it.sku]?.value = it }
             skuDetailsResponseTime = SystemClock.elapsedRealtime()
         } else skuDetailsResponseTime = -skuRequeryDelay
     }
@@ -92,7 +87,7 @@ class BillingDataSource private constructor(
 
     private fun setSkuStateFromPurchase(purchase: Purchase) {
         purchase.skus.forEach {
-            skuStateMap[it]?.value = when (purchase.purchaseState) {
+            _skuState[it]?.value = when (purchase.purchaseState) {
                 Purchase.PurchaseState.PENDING -> PurchaseState.Pending
                 Purchase.PurchaseState.UNSPECIFIED_STATE -> PurchaseState.Unowned
                 Purchase.PurchaseState.PURCHASED -> if (purchase.isAcknowledged) PurchaseState.Acknowledged else PurchaseState.Purchased
@@ -102,7 +97,7 @@ class BillingDataSource private constructor(
     }
 
     private fun setSkuState(sku: String, state: PurchaseState) {
-        skuStateMap[sku]?.value = state
+        _skuState[sku]?.value = state
     }
 
     private fun processPurchaseList(purchases: List<Purchase>, toUpdate: List<String>?) {
@@ -133,10 +128,10 @@ class BillingDataSource private constructor(
         defaultScope.launch {
             billingClient.launchBillingFlow(
                 activity,
-                BillingFlowParams.newBuilder().setSkuDetails(skuDetailsMap[sku]?.value!!).build()
+                BillingFlowParams.newBuilder().setSkuDetails(_skuDetails[sku]?.value!!).build()
             ).let {
                 if (it.responseCode == BillingClient.BillingResponseCode.OK) {
-                    billingFlowInProcess.value = true
+                    _billingFlowInProcess.value = true
                 }
             }
         }
@@ -144,18 +139,18 @@ class BillingDataSource private constructor(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun resume() {
-        if (!billingFlowInProcess.value && billingClient.isReady) defaultScope.launch { refreshPurchases() }
+        if (!_billingFlowInProcess.value && billingClient.isReady) defaultScope.launch { refreshPurchases() }
     }
 
     companion object {
         @Volatile
-        private var sInstance: BillingDataSource? = null
+        private var sInstance: BillingManager? = null
         private val handler = Handler(Looper.getMainLooper())
 
         @JvmStatic
         fun getInstance(application: Application, defaultScope: CoroutineScope) =
             sInstance ?: synchronized(this) {
-                sInstance ?: BillingDataSource(application, defaultScope).also { sInstance = it }
+                sInstance ?: BillingManager(application, defaultScope).also { sInstance = it }
             }
     }
 
@@ -169,7 +164,7 @@ class BillingDataSource private constructor(
                         processPurchaseList(purchases, null)
                         return
                     }
-                    billingFlowInProcess.value = false
+                    _billingFlowInProcess.value = false
                 }
             }).enablePendingPurchases().build()
         billingClient.startConnection(object : BillingClientStateListener {
